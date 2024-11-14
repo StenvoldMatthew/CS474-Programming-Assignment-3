@@ -80,9 +80,13 @@ def fft2d(data, isign):
   else:
     data /= (data.shape[0]//2)*(data.shape[1]//2)
   
+  # Each pixel is represented by the following matrix: | R  I |
+  # The I values are set to the most recently          | I  0 |
+  # updated value before computing
+
   # Apply 1D FFT on rows
   for i in range(1, data.shape[0], 2):
-    data[i, 2::2] = data[i+1, 1::2]
+    data[i, 2::2] = data[i+1, 1::2] 
     fft(data[i, :], data.shape[1]//2, isign)
 
   # Apply 1D FFT on columns
