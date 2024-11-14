@@ -80,13 +80,14 @@ def fft2d(data, isign):
   else:
     data /= (data.shape[0]//2)*(data.shape[1]//2)
   
-
   # Apply 1D FFT on rows
-  for i in range(data.shape[0]):
+  for i in range(1, data.shape[0], 2):
+    data[i, 2::2] = data[i+1, 1::2]
     fft(data[i, :], data.shape[1]//2, isign)
 
   # Apply 1D FFT on columns
-  for j in range(data.shape[1]):
+  for j in range(1, data.shape[1], 2):
+    data[2::2, j] = data[1::2, j+1]
     fft(data[:, j], data.shape[0]//2, isign)
 
   if isign == 1:
@@ -102,7 +103,7 @@ def convertToInput2d(arr, N, M):
 
 def extractResults(data):
   real = data[1::2, 1::2]
-  imag = data[2::2, 2::2]
+  imag = data[2::2, 1::2]
   mag = np.zeros_like(real)
   for i in range(real.shape[0]):
     for j in range(real.shape[1]):   
@@ -144,7 +145,6 @@ def question2a():
   images.append(mag)
   titles.append("Magnitude Pre Adjust")
 
-  #Shift Magnitude
   rows, cols = mag.shape
   top_left = mag[:rows//2, :cols//2]
   top_right = mag[:rows//2, cols//2:]
@@ -157,13 +157,15 @@ def question2a():
   adjMag[:rows//2, cols//2:] = bottom_left
   adjMag[rows//2:, :cols//2] = top_right
   adjMag[rows//2:, cols//2:] = top_left
-  print(adjMag[:10, :10])
   adjMag = np.log(1 + adjMag)
-  print(adjMag[:10, :10])
 
 
   images.append(adjMag)
   titles.append("Magnitude Post Adjust")
+
+  magNormalized = 256 * (adjMag - adjMag.min()) / (adjMag.max() - adjMag.min())
+  images.append(magNormalized)
+  titles.append("Magnitude Normalized")
 
   showImages(images, titles)
 
@@ -189,7 +191,6 @@ def question2b():
   images.append(mag)
   titles.append("Magnitude Pre Adjust")
 
-  #Shift Magnitude
   rows, cols = mag.shape
   top_left = mag[:rows//2, :cols//2]
   top_right = mag[:rows//2, cols//2:]
@@ -202,13 +203,37 @@ def question2b():
   adjMag[:rows//2, cols//2:] = bottom_left
   adjMag[rows//2:, :cols//2] = top_right
   adjMag[rows//2:, cols//2:] = top_left
-  print(adjMag[:10, :10])
   adjMag = np.log(1 + adjMag)
-  print(adjMag[:10, :10])
 
 
   images.append(adjMag)
   titles.append("Magnitude Post Adjust")
+
+  magNormalized = 256 * (adjMag - adjMag.min()) / (adjMag.max() - adjMag.min())
+  images.append(magNormalized)
+  titles.append("Magnitude Normalized")
+
+  '''
+  # Tried this but couldn't quite get it to work right
+  #Shift Magnitude
+  shiftedImage = np.zeros_like(image)
+  for i in range(shiftedImage.shape[0]):
+    for j in range(shiftedImage.shape[1]):
+      shiftedImage[i,j] = (-1 ** (i+j)) * image[i,j]
+
+  images.append(shiftedImage)
+  titles.append("Shifted Image")
+
+  shiftedFft = fft2d(shiftedImage, -1)
+  real, imag, shiftedMag = extractResults(shiftedFft)
+  shiftedMag = np.log(1 + shiftedMag)
+  images.append(shiftedMag)
+  titles.append("Magnitude Post Adjust")
+  magNormalized = 255 * (shiftedMag - shiftedMag.min()) / (shiftedMag.max() - shiftedMag.min())
+  images.append(magNormalized)
+  titles.append("Magnitude Normalized")
+
+  '''
 
   showImages(images, titles)
 
@@ -233,7 +258,6 @@ def question2c():
   images.append(mag)
   titles.append("Magnitude Pre Adjust")
 
-  #Shift Magnitude
   rows, cols = mag.shape
   top_left = mag[:rows//2, :cols//2]
   top_right = mag[:rows//2, cols//2:]
@@ -246,11 +270,15 @@ def question2c():
   adjMag[:rows//2, cols//2:] = bottom_left
   adjMag[rows//2:, :cols//2] = top_right
   adjMag[rows//2:, cols//2:] = top_left
-  #adjMag = np.log(1 + adjMag)
+  adjMag = np.log(1 + adjMag)
 
 
   images.append(adjMag)
   titles.append("Magnitude Post Adjust")
+
+  magNormalized = 256 * (adjMag - adjMag.min()) / (adjMag.max() - adjMag.min())
+  images.append(magNormalized)
+  titles.append("Magnitude Normalized")
 
   showImages(images, titles)
   

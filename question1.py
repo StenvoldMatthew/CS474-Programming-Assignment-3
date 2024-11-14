@@ -58,17 +58,6 @@ def fft(data: list[float], nn: int, isign: int):
       wi = wi*wpr+wtemp*wpi+wi
     mmax=istep
 
-def fft2d(data, isign):
-  # Apply 1D FFT on rows
-  for i in range(data.shape[0]):
-    fft(data[i, :].tolist(), data.shape[1] // 2, isign)
-
-  # Apply 1D FFT on columns
-  for j in range(data.shape[1]):
-    fft(data[:, j].tolist(), data.shape[0] // 2, isign)
-
-  return data
-
 def convertToInput(arr, nn):
   data = [0] * (2 * nn + 1)
   for i in range(nn):
@@ -85,10 +74,11 @@ def extractResults(data, nn):
 
 def question1a():
   data_series = []
-  titles = ["Real Part of DFT", "Imaginary Part of DFT", "Magnitude of DFT", "Inverse of DFT"]
+  titles = ["Original", "Real Part of DFT", "Imaginary Part of DFT", "Magnitude of DFT", "Inverse of DFT"]
 
   # FFT
   input = [2, 3, 4, 4]
+  data_series.append(input)
   nn = 4
   data = convertToInput(input, nn)
   fft(data, nn, -1)
