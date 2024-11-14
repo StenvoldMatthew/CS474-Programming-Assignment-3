@@ -137,7 +137,7 @@ def runTest(filename):
   for i in range(real.shape[0]):
     for j in range(real.shape[1]):
       phaseOnly[2 * i + 1, 2* j + 1] = np.cos(np.arctan2(imag[i, j], real[i, j]))
-      phaseOnly[2 * i + 2, 2* j + 2] = np.sin(np.arctan2(imag[i, j], real[i, j]))
+      phaseOnly[2 * i + 2, 2* j + 1] = np.sin(np.arctan2(imag[i, j], real[i, j]))
   inversePO = fft2d(phaseOnly, 1)
   normalizedPO = 255 * (inversePO - inversePO.min()) / (inversePO.max() - inversePO.min())
   images.append(normalizedPO)
